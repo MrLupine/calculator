@@ -23,26 +23,11 @@ const equals = document.getElementsByClassName("calculator--equals")
 
 let sum = 0
 
-const calculatorButtons = {
-	calculator--divide: "/",
-	calculator--multiply: "*",
-	calculator--minus: "-",
-	calculator--plus: "+",
-	calculator--one: "1",
-	calculator--two: "2",
-	calculator--three: "3",
-	calculator--four: "4",
-	calculator--five: "5",
-	calculator--six: "6",
-	calculator--seven: "7",
-	calculator--eight: "8",
-	calculator--nine: "9",
-	calculator--zero: "0",
-	calculator--decimal-point: ".",
-	calculator--percentage: "%"
-	calculator--plus-minus: "-"
-}
-
 document.addEventListener("click", (e) => {
 	console.log(e.target);
+})
+
+document.getElementsByClassName("calculator__solar-panel").addEventListener('mouseover', () => {
+	const readout = document.getElementsByClassName("calculator__readout")
+	
 })

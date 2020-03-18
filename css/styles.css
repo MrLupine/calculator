@@ -41,9 +41,9 @@ body {
 	grid-row: 2 / 3;
 	height: 75vw;
 	max-height: 90vh;
-	max-width: 54vh;
+	max-width: 58.5vh;
 	padding: 1.25%;
-	width: 45vw;
+	width: 48.75vw;
 }
 
 .calculator__display {
@@ -66,13 +66,20 @@ body {
 .calculator__readout {
 	color: rgb(52, 60, 72);
     font-family: "CalculusRegular" !important;
-    font-size: 5.9em;
+    font-size: clamp(6.5vh ,10.5vw, 12.70vh);
     font-style: normal;
     height: 0;
+    opacity: 100;
     position: relative;
-    top: -5%;
+    top: -11%;
 	text-align: right;
-	-webkit-text-stroke: .007em rgb(135, 148, 143);
+	-webkit-text-stroke: .07vw rgb(135, 148, 143);
+	transition: opacity 5s;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .calculator__solar-panel {
@@ -171,7 +178,7 @@ body {
 .calculator--zero {
 	grid-area: zero;
 	border-radius: 1% 0.5% 0.5% 7% / 0.5% 1% 1% 15%;
-	padding: 11% 10.5% 5%;
+	padding: 6% 10.5% 5%;
 }
 
 .calculator--decimal-point {
