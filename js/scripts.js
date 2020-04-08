@@ -3,8 +3,26 @@ calculatorButtons.forEach(button => {
 	button.addEventListener("mouseup", (e) => calcFunction(e.target.dataset.type, e))
 })
 
+const buttonPress = (e) => {
+	const currentButton = document.querySelector(`[data-type='${e.key}']`);
+	if (currentButton) {
+		if (currentButton.classList.contains("calculator__button--function")) {
+			currentButton.classList.toggle("calculator__button--function-active")
+		} else if (currentButton.classList.contains("calculator--equals")) {
+			currentButton.classList.toggle("calculator--equals-active")
+		} else {
+			currentButton.classList.toggle("calculator__button--active");
+		}
+	}
+}
+
 document.addEventListener("keydown", (e) => {
+	buttonPress(e)
 	calcFunction(e.key, e);
+})
+
+document.addEventListener("keyup", (e) => {
+	buttonPress(e)
 })
 
 const calculator = {
@@ -21,8 +39,7 @@ function calcFunction(input) {
 	const decimalPointCheck = () => (readout.innerHTML.includes("."))
 	const decimalPointReplace = () => (!decimalPointCheck()) ? decimalPoint.innerHTML = `<span class="calculator__readout--decimal-point-spacing">.</span>` : decimalPoint.innerHTML = ""
 	const inputNum = () => calculator.inputs.push(Number(calculator.readout))	
-	const maxReadout = () => (calculator.readout.includes(".") && calculator.readout.length <= 9) ? true : (calculator.readout.length <= 8);	
-	const maxReadoutHTML = () => (readout.innerHTML.includes(".") && readout.innerHTML.length <= 10) ? true : (readout.innerHTML.length <= 9);
+	const maxReadout = (number) => (calculator.readout.length < number || (calculator.readout.length <= (number + 1) && calculator.readout.includes(".")));	
 	const operandCheck = () => (operands.includes(`${input}`));
 	const operator = (operand, x, y) => {
 		const add = (x, y) => x + y;
@@ -71,17 +88,18 @@ function calcFunction(input) {
 			setTimeout(resetFlip, 6000);
 		}
 	}
-	const spanTagCreation = () => {
-		readout.innerHTML = readout.innerHTML.replace(/\./, `<span class="calculator__readout--decimal-point-spacing">.</span>`);
-		readout.innerHTML = readout.innerHTML.replace(/1/g, `<span class="calculator__readout--one-spacing">1</span>`);
-	}
 	const updateDomReadout = (x) => {
+		const spanTagCreation = () => {
+			readout.innerHTML = readout.innerHTML.replace(/\./, `<span class="calculator__readout--decimal-point-spacing">.</span>`);
+			readout.innerHTML = readout.innerHTML.replace(/1/g, `<span class="calculator__readout--one-spacing">1</span>`);
+		}
 		calculator.readout = `${x}`
 		readout.innerHTML = calculator.readout;
+		spanTagCreation();
 	}
 
-	if (!isNaN(input) && maxReadout()) {
-		if (calculator.readout === "0" && input === 0) {
+	if (!isNaN(input) && maxReadout(9)) {
+		if (calculator.readout === "0" && input === "0") {
 			return
 		}
 		updateDomReadout(calculator.readout + `${input}`);
@@ -116,30 +134,33 @@ function calcFunction(input) {
 		} else {
 			updateDomReadout(calculator.readout / 100);
 		}
-	} else if (input === "=" || input === "Enter") {
+	} else if (input === "plus-minus") {
+		if (calculator.readout === "") {
+			updateDomReadout("-0");
+		} else if (calculator.readout[0] === "-") {
+			updateDomReadout(calculator.readout.slice(1));
+		} else if (!maxReadout(8)) {
+			updateDomReadout(`-${calculator.readout.slice(0, -1)}`);
+		} else {
+			updateDomReadout(`-${calculator.readout}`);
+		}
+	} else if (input === "Enter") {
 		if (!calculator.inputs[1] && !calculator.operand) {
 			return;
 		} else {
 			inputNum();
 			updateDomReadout(operator(calculator.operand, calculator.inputs[0], calculator.inputs[1]))
-			calculator.readout = "";
-			calculator.operand = "";
+			calculator.readout = calculator.operand = "";
 			calculator.inputs = [];
 		}
-	} else if (input === "ac" || input === "Backspace") {
-		if (calculator.readout && input === "Backspace") {
+	} else if (input === "Backspace") {
+		if (calculator.readout) {
 			updateDomReadout(calculator.readout.slice(0, -1));
-		} else if (calculator.readout && input === "ac") {
-			updateDomReadout("")
 		} else {
-			calculator.readout = ""; 
-			calculator.operand = "";
+			calculator.readout = calculator.operand = "";
 			calculator.inputs = [];
 			readout.innerHTML = "0";
 		}
-	}
-	if (maxReadoutHTML()) {
-		spanTagCreation();
 	}
 	decimalPointReplace();
 }
