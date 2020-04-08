@@ -156,6 +156,9 @@ function calcFunction(input) {
 	} else if (input === "Backspace") {
 		if (calculator.readout) {
 			updateDomReadout(calculator.readout.slice(0, -1));
+			if (!calculator.readout) {
+				readout.innerHTML = "0"
+			}
 		} else {
 			calculator.readout = calculator.operand = "";
 			calculator.inputs = [];
