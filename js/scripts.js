@@ -1,6 +1,6 @@
 const calculatorButtons = document.querySelectorAll(".calculator__button")
 calculatorButtons.forEach(button => {
-	button.addEventListener("mouseup", (e) => calcFunction(e.target.dataset.type, e))
+	button.addEventListener("mouseup", (e) => calcFunction(e.target.dataset.type, ))
 })
 
 const buttonPress = (e) => {
@@ -18,7 +18,7 @@ const buttonPress = (e) => {
 
 document.addEventListener("keydown", (e) => {
 	buttonPress(e)
-	calcFunction(e.key, e);
+	calcFunction(e.key);
 })
 
 document.addEventListener("keyup", (e) => {
@@ -29,18 +29,19 @@ const calculator = {
 	readout: "", 
 	operand: "",
 	inputs: [],
+	total: "",
 }
 
 function calcFunction(input) {
 	const decimalPoint = document.getElementById("readout-decimal-point")
 	const readout = document.getElementById("readout");
 	const operands = ["+", "-", "*", "/"]
+	const inputs = [".", "=", "Enter", "Backspace", "plus-minus"]
 
 	const decimalPointCheck = () => (readout.innerHTML.includes("."))
 	const decimalPointReplace = () => (!decimalPointCheck()) ? decimalPoint.innerHTML = `<span class="calculator__readout--decimal-point-spacing">.</span>` : decimalPoint.innerHTML = ""
 	const inputNum = () => calculator.inputs.push(Number(calculator.readout))	
 	const maxReadout = (number) => (calculator.readout.length < number || (calculator.readout.length <= (number + 1) && calculator.readout.includes(".")));	
-	const operandCheck = () => (operands.includes(`${input}`));
 	const operator = (operand, x, y) => {
 		const add = (x, y) => x + y;
 		const minus = (x, y) => x - y;
@@ -88,7 +89,7 @@ function calcFunction(input) {
 			setTimeout(resetFlip, 6000);
 		}
 	}
-	const updateDomReadout = (x) => {
+	const updateDomReadout = x => {
 		const spanTagCreation = () => {
 			readout.innerHTML = readout.innerHTML.replace(/\./, `<span class="calculator__readout--decimal-point-spacing">.</span>`);
 			readout.innerHTML = readout.innerHTML.replace(/1/g, `<span class="calculator__readout--one-spacing">1</span>`);
@@ -98,62 +99,62 @@ function calcFunction(input) {
 		spanTagCreation();
 	}
 
-	if (!isNaN(input) && maxReadout(9)) {
-		if (calculator.readout === "0" && input === "0") {
-			return
+	const inputNumber = () => {
+		if (maxReadout(9)) {
+			if (calculator.readout === "" && input === "0") {
+				return
+			}
+			updateDomReadout(calculator.readout + `${input}`);
+			CalcWordsFlip();
 		}
-		updateDomReadout(calculator.readout + `${input}`);
-		CalcWordsFlip();
-	} else if (input === "." && !decimalPointCheck()) {
-		if (calculator.readout === "" && input === ".") {
-			updateDomReadout(calculator.readout + "0.");
-		} else {
-			updateDomReadout(calculator.readout + ".");
+	}
+	const inputDecimal = () => {
+		if (!decimalPointCheck()) {
+			if (calculator.readout === "" && input === ".") {
+				updateDomReadout(calculator.readout + "0.");
+			} else {
+				updateDomReadout(calculator.readout + ".");
+			}
 		}
-	} else if (operandCheck(input)) {
+	}
+	const inputOperand = () => {
 		if (!calculator.operand && calculator.readout) {
 			inputNum();
-			calculator.operand = input;
 			calculator.readout = "";
-		} else if (calculator.operand && !calculator.readout) {
-			calculator.operand = input;
-		} else if (!calculator.inputs.length && !calculator.readout) {
-			calculator.inputs.push(Number(readout.innerHTML));
-			calculator.operand = input;
-			calculator.readout = "";
-		} else {
+		}
+		if (!calculator.inputs.length && !calculator.readout) {
+			calculator.inputs.push(Number(calculator.total));
+		} 
+		if  (calculator.operand && calculator.readout) {
 			inputNum()
 			updateDomReadout(operator(calculator.operand, calculator.inputs[0], calculator.inputs[1]))
-			calculator.operand = input;
 			calculator.inputs = [(Number(calculator.readout))];
 			calculator.readout = "";
 		}
-	} else if (input === "%") {
+		calculator.operand = input;
+	}
+	const inputPercentage = () => {
 		if (calculator.inputs[0]) {
 			updateDomReadout(calculator.inputs[0]/100 * calculator.readout);
 		} else {
 			updateDomReadout(calculator.readout / 100);
 		}
-	} else if (input === "plus-minus") {
-		if (calculator.readout === "") {
-			updateDomReadout("-0");
-		} else if (calculator.readout[0] === "-") {
-			updateDomReadout(calculator.readout.slice(1));
-		} else if (!maxReadout(8)) {
-			updateDomReadout(`-${calculator.readout.slice(0, -1)}`);
-		} else {
-			updateDomReadout(`-${calculator.readout}`);
-		}
-	} else if (input === "Enter") {
+	}
+	const inputPlusMinus = () => {
+		plusOrMinus = () => (!calculator.readout) ? "-0" : calculator.readout[0] === "-" ? calculator.readout.slice(1) : !maxReadout(8) ? `-${calculator.readout.slice(0, -1)}` : `-${calculator.readout}`;
+		updateDomReadout(plusOrMinus());
+	}
+	const inputEnter = () => {
 		if (!calculator.inputs[1] && !calculator.operand) {
 			return;
 		} else {
 			inputNum();
-			updateDomReadout(operator(calculator.operand, calculator.inputs[0], calculator.inputs[1]))
+			updateDomReadout(calculator.total = operator(calculator.operand, calculator.inputs[0], calculator.inputs[1]))
 			calculator.readout = calculator.operand = "";
 			calculator.inputs = [];
 		}
-	} else if (input === "Backspace") {
+	}
+	const inputBackspace = () => {
 		if (calculator.readout) {
 			updateDomReadout(calculator.readout.slice(0, -1));
 			if (!calculator.readout) {
@@ -163,7 +164,38 @@ function calcFunction(input) {
 			calculator.readout = calculator.operand = "";
 			calculator.inputs = [];
 			readout.innerHTML = "0";
+			calculator.total = ""
 		}
+	}
+	
+	const inputChecker = () => !isNaN(input) ? "num" : operands.includes(`${input}`) ? "operand" : inputs.includes(`${input}`) ? input : null
+
+	const calcButtonMap = {
+		"num": () => {
+			inputNumber()
+		},
+		"operand": () => {
+			inputOperand()
+		},
+		".": () => {
+			inputDecimal()
+		},
+		"Enter": () => {
+			inputEnter()
+		},
+		"=": () => {
+			inputEnter()
+		},
+		"Backspace": () => {
+			inputBackspace()
+		},
+		"plus-minus": () => {
+			inputPlusMinus()
+		},
+	}
+
+	if (inputChecker()){
+		calcButtonMap[`${inputChecker()}`]();
 	}
 	decimalPointReplace();
 }

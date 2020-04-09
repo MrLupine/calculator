@@ -29,14 +29,15 @@ body {
 	display: grid;
 	grid-template:
 		[row1-start] "screen screen screen screen" 2fr [row1-end]
-		[row2-start] ". . solar-panel solar-panel" 1fr [row2-end]
-		[row3-start] "ac plus-minus percentage divide" 2fr [row3-end]
-		[row4-start] "seven eight nine multiply" 2fr [row4-end]
-		[row5-start] "four five six minus" 2fr [row5-end]
-		[row6-start] "one two three plus" 2fr [row6-end]
-		[row7-start] "zero zero decimal-point equals" 2fr [row7-end]
+		[row2-start] ". . . ." 1vh [row2-end]
+		[row3-start] ". . solar-panel solar-panel" 1fr [row3-end]
+		[row4-start] ". . . ." 1.1vh [row4-end]
+		[row5-start] "ac plus-minus percentage divide" 2fr [row5-end]
+		[row6-start] "seven eight nine multiply" 2fr [row6-end]
+		[row7-start] "four five six minus" 2fr [row7-end]
+		[row8-start] "one two three plus" 2fr [row8-end]
+		[row9-start] "zero zero decimal-point equals" 2fr [row9-end]
 		/ 1fr 1fr 1fr 1fr;
-	grid-gap: 1% 2%;
 	grid-column: 2 / 3;
 	grid-row: 2 / 3;
 	height: 75vw;
@@ -115,7 +116,7 @@ body {
 	border-radius: 1%;
 	-webkit-box-shadow:0.1vw 0.1vw 0.3vw 0px #AFAFAF;
 	-moz-box-shadow:0.1vw 0.1vw 0.3vw 0px #AFAFAF;
-	box-shadow:0.1vw 0.1vw 0.3vw 0px #AFAFAF;
+	box-shadow: 0.1vw 0.1vw 0.3vw 0px #AFAFAF;
 	padding: 20% 21% 10%;
 	transition: box-shadow 0.25s, -moz-box-shadow 0.25s, -webkit-box-shadow 0.25s, background-color 0.1s;
 }
